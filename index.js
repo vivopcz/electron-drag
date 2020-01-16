@@ -8,12 +8,12 @@ var mouseConstructor = tryRequire('osx-mouse') || tryRequire('win-mouse');
 
 var supported = !!mouseConstructor;
 var noop = function() {};
+var mouse = mouseConstructor();
 
 var drag = function(element) {
 	element = $(element);
 
 	var offset = null;
-	var mouse = mouseConstructor();
 
 	var onmousedown = function(e) {
 		offset = [e.clientX, e.clientY];
@@ -36,9 +36,15 @@ var drag = function(element) {
 
 	return function() {
 		element.off('mousedown', onmousedown);
-		mouse.destroy();
 	};
 };
 
+var clear = function() {
+	mouse.destroy();
+};
+
 drag.supported = supported;
-module.exports = supported ? drag : noop;
+module.exports = {
+	drag: supported ? drag : noop,
+	clear: supported ? clear : noop,
+};
